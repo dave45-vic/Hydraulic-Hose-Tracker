@@ -1,5 +1,5 @@
 # Hydraulic Hose Tracker
-Hydraulic Hose performce tracker tho check the intregrity of all hydraulic hose frabricated and installed into any heavy duty equipment built using HTML, CSS and JavaScript.
+A digital tracking tool built to ensure quality control, failure analysis tracking, and structural integrity verification for hydraulic hose assemblies on industrial equipment built using HTML, CSS and JavaScript.
 
 
 
