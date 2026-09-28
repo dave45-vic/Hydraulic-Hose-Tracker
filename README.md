@@ -13,4 +13,4 @@ Hydraulic Hose performce tracker tho check the intregrity of all hydraulic hose 
 - JavaScript
 
 ## Live Demo
-[https://dave45-vic.github.io/Weather/](https://dave45-vic.github.io/Weather.app/)](https://dave45-vic.github.io/Hydraulic-Hose-Tracker/)
+(https://dave45-vic.github.io/Hydraulic-Hose-Tracker/)
