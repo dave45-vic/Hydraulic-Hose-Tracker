@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Integrity & Hose Performance Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Header Navigation -->
+    <!-- Responsive Header / Top Navigation Bar -->
+<header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        
+        <!-- App Title & Active Badge -->
+        <div class="flex items-center justify-between w-full md:w-auto gap-4">
+            <div>
+                <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                    <i class="fa-solid fa-wrench text-indigo-400"></i> Hydraulic Asset & Hose Tracker
+                </h1>
+                <p id="currentClientBadge" class="text-xs text-indigo-300 font-medium">Client: Frontier</p>
+            </div>
+            
+            <!-- Mobile Menu Toggle Button (Optional for smaller screens) -->
+            <button id="mobileMenuBtn" class="md:hidden text-slate-400 hover:text-white p-2" onclick="toggleMobileHeaderMenu()">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Header Actions & Selectors (Responsive Wrap Container) -->
+        <div id="headerActionsContainer" class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            
+            <!-- Client Selection Dropdown -->
+<div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
+    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Client:</span>
+    <!-- REPLACE THIS SELECT TAG WITH OPTION B -->
+    <select id="clientSelect" onchange="switchClient(this.value)" class="bg-slate-900 text-white text-xs font-medium focus:outline-none cursor-pointer border border-slate-700 rounded px-1 py-0.5">
+        <!-- Populated dynamically via app.js -->
+    </select>
+    <button onclick="openNewClientModal()" class="text-indigo-400 hover:text-indigo-300 ml-1 text-xs" title="Add New Client"><i class="fa-solid fa-plus"></i></button>
+    <button onclick="openEditClientModal()" class="text-slate-400 hover:text-slate-200 text-xs" title="Edit Client Name"><i class="fa-solid fa-pen"></i></button>
+    <button onclick="deleteCurrentClient()" class="text-slate-400 hover:text-rose-400 text-xs" title="Delete Client"><i class="fa-solid fa-trash"></i></button>
+</div>
+
+<!-- Equipment Selection Dropdown -->
+<div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
+    <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Eq:</span>
+    <!-- REPLACE THIS SELECT TAG WITH OPTION B -->
+    <select id="equipmentSelect" onchange="switchEquipment(this.value)" class="bg-slate-900 text-white text-xs font-medium focus:outline-none cursor-pointer border border-slate-700 rounded px-1 py-0.5">
+        <!-- Populated dynamically via app.js -->
+    </select>
+    <button onclick="openNewEquipmentModal()" class="text-indigo-400 hover:text-indigo-300 ml-1 text-xs" title="Add Equipment"><i class="fa-solid fa-plus"></i></button>
+    <button onclick="openEditEquipmentModal()" class="text-slate-400 hover:text-slate-200 text-xs" title="Edit Equipment Name"><i class="fa-solid fa-pen"></i></button>
+</div>
+
+            <!-- Daily Operating Hours Config -->
+            <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
+                <label for="globalDailyHours" class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Hrs/Day:</label>
+                <input type="number" id="globalDailyHours" value="20" min="1" max="24" onchange="updateDailyHours(this.value)" class="w-12 bg-slate-900 border border-slate-700 text-white text-xs text-center rounded px-1 py-0.5 focus:outline-none focus:border-indigo-500 font-mono">
+            </div>
+
+        </div>
+    </div>
+</header>
+
+    <!-- Main Content Body -->
+    <main class="p-8 space-y-8 flex-1 max-w-[1750px] w-full mx-auto">
+        
+        <!-- Equipment & Client Summary Header Card -->
+        <div class="glass-card p-6 rounded-2xl border border-slate-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+                <span id="currentClientBadge" class="text-xs uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-md font-semibold">Client: Frontier</span>
+                <h2 id="currentEquipmentTitle" class="text-2xl font-extrabold text-white mt-2">VE-01</h2>
+                <p id="equipmentMeta" class="text-xs text-slate-400 mt-1">Total Installed Hoses: <span id="totalHosesDisplay" class="text-emerald-400 font-bold">163</span></p>
+            </div>
+            <div class="flex items-center space-x-6 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <p class="text-xs text-slate-400">Total Phase Failures</p>
+                    <h3 id="statFailures" class="text-xl font-bold text-rose-400">0</h3>
+                </div>
+                <div class="h-8 w-px bg-slate-800"></div>
+                <div>
+                    <p class="text-xs text-slate-400">Cumulative Failure (%)</p>
+                    <h3 id="statCumulativeFailurePct" class="text-xl font-bold text-amber-400">0.00%</h3>
+                </div>
+                <div class="h-8 w-px bg-slate-800"></div>
+                <div>
+                    <p class="text-xs text-slate-400">Performance (%)</p>
+                    <h3 id="statPerformance" class="text-xl font-bold text-indigo-400">100.00%</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: Phase & Milestone Operations Log -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base text-slate-200 flex items-center space-x-2">
+                    <i class="fa-solid fa-timeline text-indigo-400"></i>
+                    <span>Phase & Milestone Operations Log (Editable Days & Auto-Calculated Hours)</span>
+                </h3>
+                <button onclick="openAddPhaseModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition-all shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-plus mr-1"></i> Add Phase Entry
+                </button>
+            </div>
+
+            <div class="glass-card rounded-2xl border border-slate-800/80 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-slate-900/90 text-slate-300 border-b border-slate-800 text-[11px] uppercase tracking-wider text-center">
+                                <th class="p-3 border-r border-slate-800" rowspan="2">S/N</th>
+                                <th class="p-3 border-r border-slate-800" rowspan="2">Volvo/Eq No.</th>
+                                <th class="p-3 border-r border-slate-800" rowspan="2">Phase</th>
+                                <th class="p-3 border-r border-slate-800" rowspan="2">Arrival at Garage</th>
+                                <th class="p-3 border-r border-slate-800" rowspan="2">Departure from Garage</th>
+                                <th class="p-3 border-r border-slate-800" rowspan="2">No of Hoses Replaced</th>
+                                <!-- Milestone 1 Header -->
+                                <th class="p-3 bg-emerald-950/40 text-emerald-300 border-r border-slate-800" colspan="3">
+                                    Milestone 1<br><span class="text-[9px] font-normal text-emerald-400/80">(1 - 90 Days)</span>
+                                </th>
+                                <!-- Milestone 2 Header -->
+                                <th class="p-3 bg-blue-950/40 text-blue-300 border-r border-slate-800" colspan="3">
+                                    Milestone 2<br><span class="text-[9px] font-normal text-blue-400/80">(91 - 180 Days)</span>
+                                </th>
+                                <!-- Milestone 3 Header -->
+                                <th class="p-3 bg-purple-950/40 text-purple-300 border-r border-slate-800" colspan="3">
+                                    Milestone 3<br><span class="text-[9px] font-normal text-purple-400/80">(181 - 360 Days)</span>
+                                </th>
+                                <!-- Milestone 4 Header -->
+                                <th class="p-3 bg-amber-950/40 text-amber-300 border-r border-slate-800" colspan="3">
+                                    Milestone 4<br><span class="text-[9px] font-normal text-amber-400/80">(Above 360 Days)</span>
+                                </th>
+                                <th class="p-3 bg-slate-900 text-slate-200" rowspan="2">Cumulative Hose Failures</th>
+                                <th class="p-3 bg-slate-900 text-slate-200" rowspan="2">Actions</th>
+                            </tr>
+                            <tr class="bg-slate-900/70 text-slate-300 border-b border-slate-800 text-[10px] uppercase tracking-wider text-center">
+                                <!-- M1 Subcols -->
+                                <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No of Days in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No of Hours in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No. Hose Failures</th>
+                                <!-- M2 Subcols -->
+                                <th class="p-2 border-r border-slate-800 bg-blue-950/20">No of Days in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-blue-950/20">No of Hours in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-blue-950/20">No. Hose Failures</th>
+                                <!-- M3 Subcols -->
+                                <th class="p-2 border-r border-slate-800 bg-purple-950/20">No of Days in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-purple-950/20">No of Hours in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-purple-950/20">No. Hose Failures</th>
+                                <!-- M4 Subcols -->
+                                <th class="p-2 border-r border-slate-800 bg-amber-950/20">No of Days in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-amber-950/20">No of Hours in Operation</th>
+                                <th class="p-2 border-r border-slate-800 bg-amber-950/20">No. Hose Failures</th>
+                            </tr>
+                        </thead>
+                        <tbody id="phaseTableBody" class="divide-y divide-slate-800/60 text-center">
+                            <!-- Injected by app.js -->
+                        </tbody>
+                        <tfoot id="phaseTableFoot" class="bg-slate-900/90 font-bold border-t border-slate-800 text-center">
+                            <!-- Totals Injected by app.js -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Detailed Equipment Failure Log Table -->
+        <div class="space-y-4 pt-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-base text-slate-200 flex items-center space-x-2">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+                    <span>Detailed Hose Failure Record (Fully Editable)</span>
+                </h3>
+                <button onclick="openAddFailureModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition-all shadow-lg shadow-indigo-600/30">
+                    <i class="fa-solid fa-plus mr-1"></i> Log Failure Event
+                </button>
+            </div>
+
+            <div class="glass-card rounded-2xl border border-slate-800/80 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                        <thead>
+                            <tr class="bg-slate-900/80 text-slate-400 border-b border-slate-800 text-[11px] uppercase tracking-wider">
+                                <th class="p-3">Failure Date</th>
+                                <th class="p-3">Hose Size</th>
+                                <th class="p-3">Production Date</th>
+                                <th class="p-3">Qty</th>
+                                <th class="p-3">Days in Op</th>
+                                <th class="p-3">Hours in Op</th>
+                                <th class="p-3">VOE PN</th>
+                                <th class="p-3">Hose PN</th>
+                                <th class="p-3">Hose Location</th>
+                                <th class="p-3">OAL</th>
+                                <th class="p-3">HL</th>
+                                <th class="p-3">End 1</th>
+                                <th class="p-3">End 2</th>
+                                <th class="p-3">Warranty</th>
+                                <th class="p-3">Failure Report No</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="failureTableBody" class="divide-y divide-slate-800/60">
+                            <!-- Injected by app.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+ <!-- Edit Equipment Modal -->
+<div id="editEquipmentModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Edit Equipment Name
+            </h3>
+            <button onclick="closeEditEquipmentModal()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">Update the designation for this machinery/equipment profile. All phase records and failure logs will be preserved.</p>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">New Equipment Name</label>
+                <input type="text" id="editEquipmentInput" class="w-full bg-slate-950 text-white text-sm rounded-xl px-4 py-2.5 border border-slate-700 focus:outline-none focus:border-indigo-500 font-medium" placeholder="e.g., Komatsu HD785...">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeEditEquipmentModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button onclick="confirmEditEquipment()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors shadow-lg shadow-indigo-600/20">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Client Modal -->
+<div id="editClientModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Edit Client Name
+            </h3>
+            <button onclick="closeEditClientModal()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">Update the name for this client profile. All associated equipment phases, tracking logs, and failure reports will be preserved under the new name.</p>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">New Client Name</label>
+                <input type="text" id="editClientInput" class="w-full bg-slate-950 text-white text-sm rounded-xl px-4 py-2.5 border border-slate-700 focus:outline-none focus:border-indigo-500 font-medium" placeholder="Enter client name...">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeEditClientModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button onclick="confirmEditClient()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors shadow-lg shadow-indigo-600/20">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Phase Modal -->
+<div id="editPhaseModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-indigo-400"></i> Edit Phase & Milestones
+            </h3>
+            <button onclick="closeEditPhaseModal()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Phase Number</label>
+                    <input type="text" id="editPhaseNo" class="w-full bg-slate-950 text-white text-sm rounded-xl px-3 py-2 border border-slate-700 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Hoses Replaced</label>
+                    <input type="number" id="editPhaseHoses" class="w-full bg-slate-950 text-white text-sm rounded-xl px-3 py-2 border border-slate-700 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Arrival Date</label>
+                    <input type="date" id="editPhaseArrival" class="w-full bg-slate-950 text-white text-sm rounded-xl px-3 py-2 border border-slate-700 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Departure Date</label>
+                    <input type="date" id="editPhaseDeparture" class="w-full bg-slate-950 text-white text-sm rounded-xl px-3 py-2 border border-slate-700 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <!-- Milestones Grid -->
+            <div class="border-t border-slate-800 pt-3">
+                <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Milestone Tracking (Days & Failures)</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">M1 Days / Failures</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="editM1Days" placeholder="Days" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                            <input type="number" id="editM1Fail" placeholder="Failures" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">M2 Days / Failures</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="editM2Days" placeholder="Days" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                            <input type="number" id="editM2Fail" placeholder="Failures" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">M3 Days / Failures</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="editM3Days" placeholder="Days" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                            <input type="number" id="editM3Fail" placeholder="Failures" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">M4 Days / Failures</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="editM4Days" placeholder="Days" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                            <input type="number" id="editM4Fail" placeholder="Failures" class="w-1/2 bg-slate-950 text-white text-xs rounded-lg px-2 py-1.5 border border-slate-700">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeEditPhaseModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors">Cancel</button>
+                <button onclick="confirmEditPhase()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors shadow-lg shadow-indigo-600/20">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Failure Modal -->
+<div id="editFailureModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Edit Failure Record
+            </h3>
+            <button onclick="closeEditFailureModal()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <div class="space-y-3">
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Report No</label>
+                    <input type="text" id="editFailReportNo" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Failure Date</label>
+                    <input type="date" id="editFailDate" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Hose Size</label>
+                    <input type="text" id="editFailSize" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Production Date</label>
+                    <input type="date" id="editFailProdDate" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Quantity</label>
+                    <input type="number" id="editFailQty" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Days in Operation</label>
+                    <input type="number" id="editFailDaysOp" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">VOE Part Number</label>
+                    <input type="text" id="editFailVoePn" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Hose Part Number</label>
+                    <input type="text" id="editFailHosePn" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Location</label>
+                    <input type="text" id="editFailLocation" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">OAL</label>
+                    <input type="text" id="editFailOal" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">HL</label>
+                    <input type="text" id="editFailHl" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">End 1 Fitting</label>
+                    <input type="text" id="editFailEnd1" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">End 2 Fitting</label>
+                    <input type="text" id="editFailEnd2" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase mb-1">Warranty Status</label>
+                    <input type="text" id="editFailWarranty" class="w-full bg-slate-950 text-white text-xs rounded-xl px-3 py-2 border border-slate-700">
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-3">
+                <button onclick="closeEditFailureModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-colors">Cancel</button>
+                <button onclick="confirmEditFailure()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-xl transition-colors shadow-lg shadow-indigo-600/20">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Generic Custom Input Modal -->
+<div id="customPromptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+            <h3 id="promptModalTitle" class="text-white font-bold text-base">Input Required</h3>
+            <button onclick="closeCustomPrompt()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <p id="promptModalMessage" class="text-sm text-slate-300">Please enter the required information:</p>
+            <input type="text" id="promptModalInput" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500 font-medium" placeholder="Type here...">
+        </div>
+        <div class="px-6 py-3 bg-slate-950/60 border-t border-slate-800 flex justify-end gap-3">
+            <button onclick="closeCustomPrompt()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg transition-colors">Cancel</button>
+            <button id="promptModalSubmitBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors shadow-lg shadow-indigo-600/20">Confirm</button>
+        </div>
+    </div>
+</div>
+    <script src="app.js"></script>
+   
+</body>
+</html>
