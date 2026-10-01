@@ -1,7 +1,7 @@
-// --- LOCAL STORAGE FALLBACK CONFIGURATION ---
+
 const STORAGE_KEY = 'hydraulic_tracker_data_v1';
 
-// Default sample data
+
 const defaultClientData = {
     "Frontier": {
         dailyHours: 20,
@@ -39,7 +39,7 @@ let editingPhaseIndex = null;
 let editingFailureIndex = null;
 let customPromptCallback = null;
 
-// Load data from localStorage on startup
+
 document.addEventListener("DOMContentLoaded", () => {
     loadAppDataLocally();
 });
@@ -85,7 +85,7 @@ function saveDataLocally() {
     }
 }
 
-// --- PROFESSIONAL CUSTOM MODAL PROMPT HELPERS ---
+
 function showCustomPrompt(title, message, defaultValue = "", callback) {
     const modal = document.getElementById("customPromptModal");
     const titleEl = document.getElementById("promptModalTitle");
