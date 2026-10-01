@@ -11,12 +11,11 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
 
-    <!-- Top Header Navigation -->
-    <!-- Responsive Header / Top Navigation Bar -->
+  
 <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-3">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         
-        <!-- App Title & Active Badge -->
+        
         <div class="flex items-center justify-between w-full md:w-auto gap-4">
             <div>
                 <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
@@ -25,39 +24,39 @@
                 <p id="currentClientBadge" class="text-xs text-indigo-300 font-medium">Client: Frontier</p>
             </div>
             
-            <!-- Mobile Menu Toggle Button (Optional for smaller screens) -->
+           
             <button id="mobileMenuBtn" class="md:hidden text-slate-400 hover:text-white p-2" onclick="toggleMobileHeaderMenu()">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
         </div>
 
-        <!-- Header Actions & Selectors (Responsive Wrap Container) -->
+       
         <div id="headerActionsContainer" class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
             
-            <!-- Client Selection Dropdown -->
+           
 <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
     <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Client:</span>
-    <!-- REPLACE THIS SELECT TAG WITH OPTION B -->
+   
     <select id="clientSelect" onchange="switchClient(this.value)" class="bg-slate-900 text-white text-xs font-medium focus:outline-none cursor-pointer border border-slate-700 rounded px-1 py-0.5">
-        <!-- Populated dynamically via app.js -->
+       
     </select>
     <button onclick="openNewClientModal()" class="text-indigo-400 hover:text-indigo-300 ml-1 text-xs" title="Add New Client"><i class="fa-solid fa-plus"></i></button>
     <button onclick="openEditClientModal()" class="text-slate-400 hover:text-slate-200 text-xs" title="Edit Client Name"><i class="fa-solid fa-pen"></i></button>
     <button onclick="deleteCurrentClient()" class="text-slate-400 hover:text-rose-400 text-xs" title="Delete Client"><i class="fa-solid fa-trash"></i></button>
 </div>
 
-<!-- Equipment Selection Dropdown -->
+
 <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
     <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Eq:</span>
-    <!-- REPLACE THIS SELECT TAG WITH OPTION B -->
+   
     <select id="equipmentSelect" onchange="switchEquipment(this.value)" class="bg-slate-900 text-white text-xs font-medium focus:outline-none cursor-pointer border border-slate-700 rounded px-1 py-0.5">
-        <!-- Populated dynamically via app.js -->
+       
     </select>
     <button onclick="openNewEquipmentModal()" class="text-indigo-400 hover:text-indigo-300 ml-1 text-xs" title="Add Equipment"><i class="fa-solid fa-plus"></i></button>
     <button onclick="openEditEquipmentModal()" class="text-slate-400 hover:text-slate-200 text-xs" title="Edit Equipment Name"><i class="fa-solid fa-pen"></i></button>
 </div>
 
-            <!-- Daily Operating Hours Config -->
+           
             <div class="flex items-center gap-1.5 bg-slate-800/80 border border-slate-700/80 rounded-lg px-2.5 py-1.5 shadow-inner">
                 <label for="globalDailyHours" class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Hrs/Day:</label>
                 <input type="number" id="globalDailyHours" value="20" min="1" max="24" onchange="updateDailyHours(this.value)" class="w-12 bg-slate-900 border border-slate-700 text-white text-xs text-center rounded px-1 py-0.5 focus:outline-none focus:border-indigo-500 font-mono">
@@ -67,10 +66,10 @@
     </div>
 </header>
 
-    <!-- Main Content Body -->
+   
     <main class="p-8 space-y-8 flex-1 max-w-[1750px] w-full mx-auto">
         
-        <!-- Equipment & Client Summary Header Card -->
+       
         <div class="glass-card p-6 rounded-2xl border border-slate-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
                 <span id="currentClientBadge" class="text-xs uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-md font-semibold">Client: Frontier</span>
@@ -95,7 +94,7 @@
             </div>
         </div>
 
-        <!-- SECTION 1: Phase & Milestone Operations Log -->
+       
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-base text-slate-200 flex items-center space-x-2">
@@ -118,19 +117,19 @@
                                 <th class="p-3 border-r border-slate-800" rowspan="2">Arrival at Garage</th>
                                 <th class="p-3 border-r border-slate-800" rowspan="2">Departure from Garage</th>
                                 <th class="p-3 border-r border-slate-800" rowspan="2">No of Hoses Replaced</th>
-                                <!-- Milestone 1 Header -->
+                               
                                 <th class="p-3 bg-emerald-950/40 text-emerald-300 border-r border-slate-800" colspan="3">
                                     Milestone 1<br><span class="text-[9px] font-normal text-emerald-400/80">(1 - 90 Days)</span>
                                 </th>
-                                <!-- Milestone 2 Header -->
+                               
                                 <th class="p-3 bg-blue-950/40 text-blue-300 border-r border-slate-800" colspan="3">
                                     Milestone 2<br><span class="text-[9px] font-normal text-blue-400/80">(91 - 180 Days)</span>
                                 </th>
-                                <!-- Milestone 3 Header -->
+                              
                                 <th class="p-3 bg-purple-950/40 text-purple-300 border-r border-slate-800" colspan="3">
                                     Milestone 3<br><span class="text-[9px] font-normal text-purple-400/80">(181 - 360 Days)</span>
                                 </th>
-                                <!-- Milestone 4 Header -->
+                               
                                 <th class="p-3 bg-amber-950/40 text-amber-300 border-r border-slate-800" colspan="3">
                                     Milestone 4<br><span class="text-[9px] font-normal text-amber-400/80">(Above 360 Days)</span>
                                 </th>
@@ -138,36 +137,36 @@
                                 <th class="p-3 bg-slate-900 text-slate-200" rowspan="2">Actions</th>
                             </tr>
                             <tr class="bg-slate-900/70 text-slate-300 border-b border-slate-800 text-[10px] uppercase tracking-wider text-center">
-                                <!-- M1 Subcols -->
+                               
                                 <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No of Days in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No of Hours in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-emerald-950/20">No. Hose Failures</th>
-                                <!-- M2 Subcols -->
+                              
                                 <th class="p-2 border-r border-slate-800 bg-blue-950/20">No of Days in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-blue-950/20">No of Hours in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-blue-950/20">No. Hose Failures</th>
-                                <!-- M3 Subcols -->
+                               
                                 <th class="p-2 border-r border-slate-800 bg-purple-950/20">No of Days in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-purple-950/20">No of Hours in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-purple-950/20">No. Hose Failures</th>
-                                <!-- M4 Subcols -->
+                               
                                 <th class="p-2 border-r border-slate-800 bg-amber-950/20">No of Days in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-amber-950/20">No of Hours in Operation</th>
                                 <th class="p-2 border-r border-slate-800 bg-amber-950/20">No. Hose Failures</th>
                             </tr>
                         </thead>
                         <tbody id="phaseTableBody" class="divide-y divide-slate-800/60 text-center">
-                            <!-- Injected by app.js -->
+                           
                         </tbody>
                         <tfoot id="phaseTableFoot" class="bg-slate-900/90 font-bold border-t border-slate-800 text-center">
-                            <!-- Totals Injected by app.js -->
+                          
                         </tfoot>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 2: Detailed Equipment Failure Log Table -->
+        
         <div class="space-y-4 pt-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-bold text-base text-slate-200 flex items-center space-x-2">
@@ -203,7 +202,7 @@
                             </tr>
                         </thead>
                         <tbody id="failureTableBody" class="divide-y divide-slate-800/60">
-                            <!-- Injected by app.js -->
+                          
                         </tbody>
                     </table>
                 </div>
@@ -213,7 +212,7 @@
 
 
     </main>
- <!-- Edit Equipment Modal -->
+ 
 <div id="editEquipmentModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
         <div class="flex items-center justify-between mb-4">
@@ -241,7 +240,7 @@
         </div>
     </div>
 </div>
-<!-- Edit Client Modal -->
+
 <div id="editClientModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
         <div class="flex items-center justify-between mb-4">
@@ -269,7 +268,7 @@
         </div>
     </div>
 </div>
-<!-- Edit Phase Modal -->
+
 <div id="editPhaseModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
@@ -302,7 +301,7 @@
                 </div>
             </div>
 
-            <!-- Milestones Grid -->
+           
             <div class="border-t border-slate-800 pt-3">
                 <h4 class="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Milestone Tracking (Days & Failures)</h4>
                 <div class="grid grid-cols-2 gap-3">
@@ -345,7 +344,7 @@
     </div>
 </div>
 
-<!-- Edit Failure Modal -->
+
 <div id="editFailureModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-xl shadow-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
@@ -431,7 +430,7 @@
         </div>
     </div>
 </div>
-<!-- Generic Custom Input Modal -->
+
 <div id="customPromptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
